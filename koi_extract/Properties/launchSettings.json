@@ -1,7 +1,8 @@
 {
   "profiles": {
     "koi_extract": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\koi\\abdata\" \"C:\\koi\\redir\" \"C:\\koi\\koi.ini\" "
     }
   }
 }

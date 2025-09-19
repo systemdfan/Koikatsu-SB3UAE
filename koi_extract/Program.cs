@@ -2,7 +2,8 @@
 using Config;
 using IO;
 using Processing;
-
+using SB3Utility;
+using UnityPlugin;
 class Program
 {
     static void Main(string[] args)
@@ -12,6 +13,11 @@ class Program
         {
             Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} <abdata path> <output path> [config.ini]");
             return;
+        }
+        if (args.Length > 2 && args[2] == "--debug")
+        {
+            IsDebugMode = true;
+            Console.WriteLine("DEBUG MODE: Включен расширенный вывод отладки");
         }
 
         string abdataPath = args[0];

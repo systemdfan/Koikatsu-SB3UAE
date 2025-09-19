@@ -13,11 +13,59 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Brotli.Core">
+      <HintPath>inc\Brotli.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DesignerClasses_AnyCPU">
+      <HintPath>inc\DesignerClasses_AnyCPU.dll</HintPath>
+    </Reference>
+    <Reference Include="DX11TutCore">
+      <HintPath>inc\DX11TutCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Jolt">
+      <HintPath>inc\Jolt.dll</HintPath>
+    </Reference>
+    <Reference Include="Jolt.Testing.GeneratedTypes">
+      <HintPath>inc\Jolt.Testing.GeneratedTypes.dll</HintPath>
+    </Reference>
+    <Reference Include="LZ4">
+      <HintPath>inc\LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="MessagePack">
+      <HintPath>inc\MessagePack.dll</HintPath>
+    </Reference>
+    <Reference Include="mikktspace_managed">
+      <HintPath>inc\mikktspace_managed.dll</HintPath>
+    </Reference>
+    <Reference Include="NIFPlugin">
+      <HintPath>inc\NIFPlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="SB3Utility">
+      <HintPath>inc\SB3Utility.dll</HintPath>
+    </Reference>
+    <Reference Include="SB3UtilityFBX">
+      <HintPath>inc\SB3UtilityFBX.dll</HintPath>
+    </Reference>
+    <Reference Include="SB3UtilityNIF">
+      <HintPath>inc\SB3UtilityNIF.dll</HintPath>
+    </Reference>
+    <Reference Include="SB3UtilityPlugins">
+      <HintPath>inc\SB3UtilityPlugins.dll</HintPath>
+    </Reference>
+    <Reference Include="SB3UtilityPP">
+      <HintPath>inc\SB3UtilityPP.dll</HintPath>
+    </Reference>
+    <Reference Include="SlimDX">
+      <HintPath>inc\SlimDX.dll</HintPath>
+    </Reference>
     <Reference Include="UnityBase">
-      <HintPath>sb3u\plugins\UnityBase.dll</HintPath>
+      <HintPath>inc\UnityBase.dll</HintPath>
     </Reference>
     <Reference Include="UnityPlugin">
-      <HintPath>sb3u\plugins\UnityPlugin.dll</HintPath>
+      <HintPath>inc\UnityPlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>inc\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
   </ItemGroup>
 

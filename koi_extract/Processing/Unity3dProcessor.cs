@@ -1,6 +1,7 @@
 ﻿using Config;
 using IO;
 using UnityPlugin;
+using SB3Utility;
 
 namespace Processing
 {
@@ -32,7 +33,7 @@ namespace Processing
                     var name = assetNames[i];
                     var monobeh = (MonoBehaviour)editor.LoadWhenNeeded(i);
                     var lines = extractor.ExtractDialogueLines(monobeh);
-
+                 
                     if (lines.Count > 0)
                     {
                         writer.WriteDialogueFile(unity3dPath, monobeh.m_Name, lines, config);
