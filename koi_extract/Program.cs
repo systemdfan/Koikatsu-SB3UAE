@@ -4,27 +4,30 @@ using IO;
 using Processing;
 using SB3Utility;
 using UnityPlugin;
+
 class Program
 {
     public static bool IsDebugMode = false;
+
     static void Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
 
         if (args.Length < 2)
         {
-            Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} <abdata path> <output path> [config.ini]");
+            Console.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} [--debug] <abdata path> <output path> [config.ini]");
             return;
         }
-        if (args.Length > 2 && args[2] == "--debug")
-        {
-            IsDebugMode = true;
-            Console.WriteLine("DEBUG MODE: Включен расширенный вывод отладки");
-        }
 
-        string abdataPath = args[0];
-        string outputPath = args[1];
-        string? iniPath = args.Length > 2 ? args[2] : null;
+        IsDebugMode = args.Contains("--debug");
+        if (IsDebugMode)
+            Console.WriteLine("DEBUG MODE: Включен расширенный вывод отладки");
+
+        args = args.Where(a => a != "--debug").ToArray();
+
+        string abdataPath = NormalizePath(args[0]);
+        string outputPath = NormalizePath(args[1]);
+        string? iniPath = args.Length > 2 ? NormalizePath(args[2]) : null;
 
         if (!Directory.Exists(abdataPath))
         {
@@ -32,7 +35,9 @@ class Program
             return;
         }
 
-            var config = new IniConfig();
+        Directory.CreateDirectory(outputPath); 
+
+        var config = new IniConfig();
         if (iniPath != null && File.Exists(iniPath))
             config.Load(iniPath);
 
@@ -42,7 +47,6 @@ class Program
         var writer = new OutputWriter(outputPath, abdataPath);
         var processor = new Unity3dProcessor(config, new DialogueExtractor(), writer);
 
-
         foreach (var file in files)
         {
             Console.WriteLine($"Opened {file}");
@@ -50,5 +54,12 @@ class Program
         }
 
         Console.WriteLine("Done.");
+    }
+
+    static string NormalizePath(string path)
+    {
+        return Path.GetFullPath(path
+            .Trim('\'', '"')
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
     }
 }
