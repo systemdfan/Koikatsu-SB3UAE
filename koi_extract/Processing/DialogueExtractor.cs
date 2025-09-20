@@ -2,6 +2,7 @@
 using System.Reflection;
 using UnityPlugin;
 using Models;
+using logging;
 
 namespace Processing
 {
@@ -32,12 +33,12 @@ namespace Processing
 
             if (utype is UClass uclass)
             {
-                Console.WriteLine($"[DEBUG] Проверяем UClass в {path}, ClassName: {GetClassName(uclass)}, Members: {uclass.Members?.Count ?? 0}");
+                log.DebugLog($"[DEBUG] Проверяем UClass в {path}, ClassName: {GetClassName(uclass)}, Members: {uclass.Members?.Count ?? 0}");
 
                 // Проверяем, является ли этот UClass элементом с _command
                 if (HasCommand16(uclass))
                 {
-                    Console.WriteLine($"[НАЙДЕН] _command = 16 в {path}");
+                    log.DebugLog($"[НАЙДЕН] _command = 16 в {path}");
 
                     // Ищем _args внутри этого же UClass
                     var dialogueStrings = ExtractArgsFromCommand16(uclass);
@@ -69,7 +70,7 @@ namespace Processing
             }
             else if (utype is Uarray uarray)
             {
-                Console.WriteLine($"[DEBUG] Проверяем Uarray в {path}, Length: {uarray.Value?.Length ?? 0}");
+                log.DebugLog($"[DEBUG] Проверяем Uarray в {path}, Length: {uarray.Value?.Length ?? 0}");
 
                 // Рекурсивно проверяем элементы массива
                 if (uarray.Value != null)
@@ -82,7 +83,7 @@ namespace Processing
             }
             else
             {
-                Console.WriteLine($"[DEBUG] Пропускаем {utype?.GetType().Name} в {path}");
+                log.DebugLog($"[DEBUG] Пропускаем {utype?.GetType().Name} в {path}");
             }
         }
 
@@ -99,17 +100,17 @@ namespace Processing
             if (GetClassName(uclass) == "Param" && uclass.Members.Count == 5)
             {
                 var commandMember = uclass.Members[3]; // _command всегда на позиции 3
-                Console.WriteLine($"[DEBUG] Проверяем member[3] как _command, тип: {commandMember?.GetType().Name}");
+                log.DebugLog($"[DEBUG] Проверяем member[3] как _command, тип: {commandMember?.GetType().Name}");
 
                 var commandValue = GetRawValue(commandMember);
-                Console.WriteLine($"[DEBUG] Значение member[3]: {commandValue} (тип: {commandValue?.GetType().Name})");
+                log.DebugLog($"[DEBUG] Значение member[3]: {commandValue} (тип: {commandValue?.GetType().Name})");
 
                 if (commandValue is int intVal)
                 {
-                    Console.WriteLine($"[DEBUG] _command = {intVal}, ищем 16");
+                    log.DebugLog($"[DEBUG] _command = {intVal}, ищем 16");
                     if (intVal == 16)
                     {
-                        Console.WriteLine($"[DEBUG] ✓ НАЙДЕН _command = 16!");
+                        log.DebugLog($"[DEBUG] ✓ НАЙДЕН _command = 16!");
                         return true;
                     }
                 }
@@ -120,16 +121,16 @@ namespace Processing
             {
                 var member = uclass.Members[i];
                 string memberName = TryGetMemberName(uclass, i);
-                Console.WriteLine($"[DEBUG] Проверяем член {i}: name='{memberName}', type={member?.GetType().Name}");
+                log.DebugLog($"[DEBUG] Проверяем член {i}: name='{memberName}', type={member?.GetType().Name}");
 
                 if (memberName == "_command")
                 {
                     var commandValue = GetRawValue(member);
-                    Console.WriteLine($"[DEBUG] _command найден через имя! Значение: {commandValue}");
+                    log.DebugLog($"[DEBUG] _command найден через имя! Значение: {commandValue}");
 
                     if (commandValue is int intVal && intVal == 16)
                     {
-                        Console.WriteLine($"[DEBUG] ✓ НАЙДЕН _command = 16 через имя!");
+                        log.DebugLog($"[DEBUG] ✓ НАЙДЕН _command = 16 через имя!");
                         return true;
                     }
                 }
@@ -150,12 +151,12 @@ namespace Processing
             if (GetClassName(commandClass) == "Param" && commandClass.Members.Count == 5)
             {
                 var argsMember = commandClass.Members[4]; // _args на позиции 4
-                Console.WriteLine($"[DEBUG] _args member[4] тип: {argsMember?.GetType().Name}");
+                log.DebugLog($"[DEBUG] _args member[4] тип: {argsMember?.GetType().Name}");
 
                 if (argsMember is UClass argsClass)
                 {
                     string className = GetClassName(argsClass);
-                    Console.WriteLine($"[DEBUG] _args ClassName: {className}");
+                    log.DebugLog($"[DEBUG] _args ClassName: {className}");
 
                     if (argsClass.Members != null && argsClass.Members.Count > 0)
                     {
@@ -163,7 +164,7 @@ namespace Processing
                         var vectorMember = argsClass.Members[0];
                         if (vectorMember is Uarray argsArray)
                         {
-                            Console.WriteLine($"[DEBUG] Найден массив длины: {argsArray.Value?.Length ?? 0}");
+                            log.DebugLog($"[DEBUG] Найден массив длины: {argsArray.Value?.Length ?? 0}");
 
                             // Извлекаем строки из массива
                             if (argsArray.Value != null)
@@ -171,10 +172,13 @@ namespace Processing
                                 foreach (var element in argsArray.Value)
                                 {
                                     string extractedString = ExtractStringFromElement(element);
+                                    result.Add(extractedString);
                                     if (!string.IsNullOrEmpty(extractedString))
                                     {
-                                        result.Add(extractedString);
-                                        Console.WriteLine($"[DEBUG] Извлечена строка: '{extractedString}'");
+                                        log.DebugLog($"[DEBUG] Извлечена строка: '{extractedString}'");
+                                    }
+                                    else {
+                                        log.DebugLog($"[DEBUG] Извлечено повествование");
                                     }
                                 }
                             }
@@ -191,12 +195,12 @@ namespace Processing
                 if (memberName == "_args")
                 {
                     var argsMember = commandClass.Members[i];
-                    Console.WriteLine($"[DEBUG] Найден _args через имя на позиции {i}");
+                    log.DebugLog($"[DEBUG] Найден _args через имя на позиции {i}");
 
                     if (argsMember is UClass argsClass)
                     {
                         string className = GetClassName(argsClass);
-                        Console.WriteLine($"[DEBUG] _args ClassName: {className}");
+                        log.DebugLog($"[DEBUG] _args ClassName: {className}");
 
                         if (argsClass.Members != null)
                         {
@@ -205,7 +209,7 @@ namespace Processing
                                 var vectorMember = argsClass.Members[j];
                                 if (vectorMember is Uarray argsArray)
                                 {
-                                    Console.WriteLine($"[DEBUG] Найден массив длины: {argsArray.Value?.Length ?? 0}");
+                                    log.DebugLog($"[DEBUG] Найден массив длины: {argsArray.Value?.Length ?? 0}");
 
                                     if (argsArray.Value != null)
                                     {
@@ -215,7 +219,7 @@ namespace Processing
                                             if (!string.IsNullOrEmpty(extractedString))
                                             {
                                                 result.Add(extractedString);
-                                                Console.WriteLine($"[DEBUG] Извлечена строка: '{extractedString}'");
+                                                log.DebugLog($"[DEBUG] Извлечена строка: '{extractedString}'");
                                             }
                                         }
                                     }
@@ -242,21 +246,34 @@ namespace Processing
                 string className = GetClassName(stringClass);
                 if (className == "string" && stringClass.Members != null)
                 {
-                    // Ищем массив байтов внутри string класса
                     foreach (var member in stringClass.Members)
                     {
                         if (member is Uarray byteArray && IsByteArray(byteArray))
                         {
                             return TryDecodeByteArray(byteArray);
                         }
+                        // Добавить проверку на пустой массив:
+                        else if (member is Uarray emptyArray && emptyArray.Value?.Length == 0)
+                        {
+                            log.DebugLog("[DEBUG] Найден пустой массив - возвращаем пустую строку");
+                            return string.Empty; // Пустой тег для повествования
+                        }
                     }
                 }
             }
 
-            // Если это сразу массив байтов
-            if (element is Uarray directArray && IsByteArray(directArray))
+            if (element is Uarray directArray)
             {
-                return TryDecodeByteArray(directArray);
+                if (IsByteArray(directArray))
+                {
+                    return TryDecodeByteArray(directArray);
+                }
+                // Добавить проверку на пустой массив:
+                else if (directArray.Value?.Length == 0)
+                {
+                    log.DebugLog("[DEBUG] Прямой пустой массив - возвращаем пустую строку");
+                    return string.Empty;
+                }
             }
 
             return string.Empty;
@@ -412,13 +429,6 @@ namespace Processing
             var p = t.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (p != null) return p.GetValue(utype);
             return null;
-        }
-        private void DebugLog(string message)
-        {
-            if (Program.IsDebugMode)
-            {
-                Console.WriteLine(message);
-            }
         }
     }
 }

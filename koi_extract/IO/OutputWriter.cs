@@ -1,5 +1,6 @@
 ﻿using Config;
 using Models;
+using logging;
 
 namespace IO
 {
@@ -34,21 +35,26 @@ namespace IO
             {
                 string tag = line.Tag?.Trim() ?? "";
 
-                Console.WriteLine($"[DBG] OriginalTag='{tag}', characterFolder='{characterFolder}'");
+                log.DebugLog($"[DEBUG] OriginalTag='{tag}', characterFolder='{characterFolder}'");
 
                 if ((tag == "[H名]" ) && config != null)
                 {
                     string mapped = config.MapName(characterFolder, tag);
-                    Console.WriteLine($"[DBG] Mapped='{mapped}'");
+                    log.DebugLog($"[DEBUG] Mapped='{mapped}'");
 
                     if (!string.IsNullOrEmpty(mapped))
                         tag = mapped;
                 }
-
-                sw.WriteLine($"{tag}:{line.Text}");
+                if (tag == "")
+                {
+                    sw.WriteLine($"{line.Text}");
+                }
+                else {
+                    sw.WriteLine($"{tag}:{line.Text}");
+                }
             }
 
-            Console.WriteLine($"[DBG] Wrote {lines.Count} lines -> {filePath}");
+            log.DebugLog($"[DEBUG] Wrote {lines.Count} lines -> {filePath}");
         }
     }
 }

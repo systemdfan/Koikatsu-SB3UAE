@@ -6,9 +6,11 @@ using SB3Utility;
 using UnityPlugin;
 class Program
 {
+    public static bool IsDebugMode = false;
     static void Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
+
         if (args.Length < 2)
         {
             Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} <abdata path> <output path> [config.ini]");

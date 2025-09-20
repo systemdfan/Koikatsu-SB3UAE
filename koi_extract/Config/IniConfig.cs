@@ -1,4 +1,5 @@
-﻿namespace Config
+﻿using logging;
+namespace Config
 {
     public class IniConfig
     {
@@ -23,7 +24,7 @@
                     string key = parts[0].Trim().ToLower();
                     string value = parts[1].Trim();
                     mappings[key] = value;
-                    Console.WriteLine($"[DBG] INI loaded: '{key}' = '{value}'");
+                    log.DebugLog($"[DEBUG] INI loaded: '{key}' = '{value}'");
                 }
             }
         }
