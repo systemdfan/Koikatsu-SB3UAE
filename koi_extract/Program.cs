@@ -17,7 +17,7 @@ class Program
 
         if (args.Length < 2)
         {
-            Console.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} <abdata path> <output path> [config.ini] [--lang=] [--debug]\n\t--lang - extract specified language text (works only with kk party(doesn't work with most of charachters))\n\t\ten-US\n\tcn-TW\n\tcn-CN\n\t--debug - debug log");
+            Console.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} <abdata path> <output path> [config.ini] [--lang=] [--debug]\n\t--debug - display debug log\n\t--lang=language_code - extract specified language text (works only with kk party (doesn't work with most of the charachters))\n\tavailable codes:\n\t\ten-US\n\t\tcn-TW\n\t\tcn-CN");
             return;
         }
 
