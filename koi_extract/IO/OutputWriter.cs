@@ -45,7 +45,7 @@ namespace IO
                     if (!string.IsNullOrEmpty(mapped))
                         tag = mapped;
                 }
-                if (tag == "")
+                if (string.IsNullOrEmpty(tag))
                 {
                     sw.WriteLine($"{line.Text}");
                 }

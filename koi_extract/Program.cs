@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Config;
 using IO;
 using Processing;
@@ -8,22 +9,41 @@ using UnityPlugin;
 class Program
 {
     public static bool IsDebugMode = false;
-
+    public static bool IsExtractinglanguage = false;
+    public static string Language;
     static void Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
 
         if (args.Length < 2)
         {
-            Console.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} [--debug] <abdata path> <output path> [config.ini]");
+            Console.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} <abdata path> <output path> [config.ini] [--lang=] [--debug]\n\t--lang - extract specified language text (works only with kk party(doesn't work with most of charachters))\n\t\ten-US\n\tcn-TW\n\tcn-CN\n\t--debug - debug log");
             return;
         }
 
+        // Парсим флаги
         IsDebugMode = args.Contains("--debug");
         if (IsDebugMode)
             Console.WriteLine("DEBUG MODE: Включен расширенный вывод отладки");
 
-        args = args.Where(a => a != "--debug").ToArray();
+        // Парсим --lang=
+        string? langCode = null;
+        var langArg = args.FirstOrDefault(a => a.StartsWith("--lang="));
+        if (langArg != null)
+        {
+            langCode = langArg.Substring("--lang=".Length);
+            var validLanguages = new[] { "en-US", "cn-TW", "cn-CN" };
+            if (!validLanguages.Contains(langCode))
+            {
+                Console.WriteLine($"[ERROR] Invalid language code: {langCode}. Valid codes: {string.Join(", ", validLanguages)}");
+                return;
+            }
+            Language = langCode;
+            Console.WriteLine($"Language mode: {langCode}");
+        }
+
+        // Удаляем флаги из массива аргументов
+        args = args.Where(a => !a.StartsWith("--")).ToArray();
 
         string abdataPath = NormalizePath(args[0]);
         string outputPath = NormalizePath(args[1]);
@@ -34,6 +54,7 @@ class Program
             Console.WriteLine($"[ERROR] abdata path not found: {abdataPath}");
             return;
         }
+
 
         Directory.CreateDirectory(outputPath); 
 

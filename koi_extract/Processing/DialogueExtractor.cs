@@ -42,17 +42,42 @@ namespace Processing
 
                     // Ищем _args внутри этого же UClass
                     var dialogueStrings = ExtractArgsFromCommand16(uclass);
-                    if (dialogueStrings.Count == 2)
+                    if (dialogueStrings.Count >= 2) // Изменить условие с == на >=
                     {
                         string tag = NormalizeString(dialogueStrings[0]);
-                        string text = NormalizeString(dialogueStrings[1]);
 
-                        Console.WriteLine($"[ДИАЛОГ] Tag: '{tag}' -> Text: '{text}'");
+                        // Добавить проверку флага и выбор нужной строки
+                        var languageMap = new Dictionary<string, (int index, string name)>
+                        {
+                            ["en-US"] = (2, "английский"),
+                            ["cn-TW"] = (3, "традиционный китайский"),
+                            ["cn-CN"] = (4, "упрощенный китайский")
+                        };
+
+                        string text;
+                        if (languageMap.ContainsKey(Program.Language))
+                        {
+                            var (index, name) = languageMap[Program.Language];
+                            if (dialogueStrings.Count > index)
+                            {
+                                text = NormalizeString(dialogueStrings[index]);
+                                log.DebugLog($"[DEBUG] Извлекаем {name}");
+                            }
+                            else
+                            {
+                                text = NormalizeString(dialogueStrings[1]);
+                                log.DebugLog($"[DEBUG] Недостаточно строк для {name}, используем японский");
+                            }
+                        }
+                        else
+                        {
+                            text = NormalizeString(dialogueStrings[1]);
+                        }
                         result.Add(new DialogueLine(tag, text));
                     }
                     else if (dialogueStrings.Count > 0)
                     {
-                        Console.WriteLine($"[ПРЕДУПРЕЖДЕНИЕ] Найдено {dialogueStrings.Count} строк вместо 2: {string.Join(", ", dialogueStrings.Select(s => $"'{s}'"))}");
+                        Console.WriteLine($"[ПРЕДУПРЕЖДЕНИЕ] Найдено {dialogueStrings.Count} строк, ожидалось 2 или больше");
                     }
 
                     return; // Нашли команду 16, больше в этой ветке искать не нужно
