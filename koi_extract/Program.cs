@@ -24,7 +24,7 @@ class Program
         // Парсим флаги
         IsDebugMode = args.Contains("--debug");
         if (IsDebugMode)
-            Console.WriteLine("DEBUG MODE: Включен расширенный вывод отладки");
+            Console.WriteLine("DEBUG MODE: Enabled");
 
         // Парсим --lang=
         string? langCode = null;

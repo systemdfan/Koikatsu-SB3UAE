@@ -14,7 +14,7 @@ namespace Processing
             if (monobeh?.Parser?.type?.Members == null)
                 return result;
 
-            Console.WriteLine($"\n=== ПОИСК ДИАЛОГОВ в MonoBehaviour: {monobeh.m_Name} ===");
+            Console.WriteLine($"\n=== Searching dialogues in MonoBehaviour: {monobeh.m_Name} ===");
 
             int topIndex = 0;
             foreach (var member in monobeh.Parser.type.Members)
@@ -23,7 +23,7 @@ namespace Processing
                 topIndex++;
             }
 
-            Console.WriteLine($"=== НАЙДЕНО {result.Count} диалогов ===");
+            Console.WriteLine($"=== FOUND {result.Count} dialogues ===");
             return result;
         }
 
@@ -33,12 +33,12 @@ namespace Processing
 
             if (utype is UClass uclass)
             {
-                log.DebugLog($"[DEBUG] Проверяем UClass в {path}, ClassName: {GetClassName(uclass)}, Members: {uclass.Members?.Count ?? 0}");
+                log.DebugLog($"[DEBUG] Chicking UClass in {path}, ClassName: {GetClassName(uclass)}, Members: {uclass.Members?.Count ?? 0}");
 
                 // Проверяем, является ли этот UClass элементом с _command
                 if (HasCommand16(uclass))
                 {
-                    log.DebugLog($"[НАЙДЕН] _command = 16 в {path}");
+                    log.DebugLog($"[FOUND] _command = 16 in {path}");
 
                     // Ищем _args внутри этого же UClass
                     var dialogueStrings = ExtractArgsFromCommand16(uclass);
@@ -49,9 +49,9 @@ namespace Processing
                         // Добавить проверку флага и выбор нужной строки
                         var languageMap = new Dictionary<string, (int index, string name)>
                         {
-                            ["en-US"] = (2, "английский"),
-                            ["cn-TW"] = (3, "традиционный китайский"),
-                            ["cn-CN"] = (4, "упрощенный китайский")
+                            ["en-US"] = (2, "english"),
+                            ["cn-TW"] = (3, "chinese traditional"),
+                            ["cn-CN"] = (4, "chinese simplified")
                         };
 
                         string text;
@@ -61,12 +61,12 @@ namespace Processing
                             if (dialogueStrings.Count > index)
                             {
                                 text = NormalizeString(dialogueStrings[index]);
-                                log.DebugLog($"[DEBUG] Извлекаем {name}");
+                                log.DebugLog($"[DEBUG] Extracting {name}");
                             }
                             else
                             {
                                 text = NormalizeString(dialogueStrings[1]);
-                                log.DebugLog($"[DEBUG] Недостаточно строк для {name}, используем японский");
+                                log.DebugLog($"[DEBUG] i8n strings not found for {name}, unsing jp instead");
                             }
                         }
                         else
@@ -77,7 +77,7 @@ namespace Processing
                     }
                     else if (dialogueStrings.Count > 0)
                     {
-                        Console.WriteLine($"[ПРЕДУПРЕЖДЕНИЕ] Найдено {dialogueStrings.Count} строк, ожидалось 2 или больше");
+                        Console.WriteLine($"[WARNING] Found {dialogueStrings.Count} strings, 2 or more awaited");
                     }
 
                     return; // Нашли команду 16, больше в этой ветке искать не нужно
@@ -95,7 +95,7 @@ namespace Processing
             }
             else if (utype is Uarray uarray)
             {
-                log.DebugLog($"[DEBUG] Проверяем Uarray в {path}, Length: {uarray.Value?.Length ?? 0}");
+                log.DebugLog($"[DEBUG] Checking Uarray in {path}, Length: {uarray.Value?.Length ?? 0}");
 
                 // Рекурсивно проверяем элементы массива
                 if (uarray.Value != null)
@@ -108,7 +108,7 @@ namespace Processing
             }
             else
             {
-                log.DebugLog($"[DEBUG] Пропускаем {utype?.GetType().Name} в {path}");
+                log.DebugLog($"[DEBUG] Skipping {utype?.GetType().Name} in {path}");
             }
         }
 
@@ -119,23 +119,23 @@ namespace Processing
         {
             if (uclass?.Members == null || uclass.Members.Count < 5) return false;
 
-            // Из вашего лога видно, что структура Param всегда:
+            // Структура Param всегда:
             // [0] _hash (Uint32), [1] _version (Uint32), [2] _multi (Uint8), [3] _command (Uint32), [4] _args (UClass)
             // Проверим, что это именно такая структура
             if (GetClassName(uclass) == "Param" && uclass.Members.Count == 5)
             {
                 var commandMember = uclass.Members[3]; // _command всегда на позиции 3
-                log.DebugLog($"[DEBUG] Проверяем member[3] как _command, тип: {commandMember?.GetType().Name}");
+                log.DebugLog($"[DEBUG] Checking member[3] as _command, type: {commandMember?.GetType().Name}");
 
                 var commandValue = GetRawValue(commandMember);
-                log.DebugLog($"[DEBUG] Значение member[3]: {commandValue} (тип: {commandValue?.GetType().Name})");
+                log.DebugLog($"[DEBUG] Value of member[3]: {commandValue} (type: {commandValue?.GetType().Name})");
 
                 if (commandValue is int intVal)
                 {
-                    log.DebugLog($"[DEBUG] _command = {intVal}, ищем 16");
+                    log.DebugLog($"[DEBUG] _command = {intVal}, searching for 16");
                     if (intVal == 16)
                     {
-                        log.DebugLog($"[DEBUG] ✓ НАЙДЕН _command = 16!");
+                        log.DebugLog($"[DEBUG] ✓ FOUND _command = 16!");
                         return true;
                     }
                 }
@@ -146,16 +146,16 @@ namespace Processing
             {
                 var member = uclass.Members[i];
                 string memberName = TryGetMemberName(uclass, i);
-                log.DebugLog($"[DEBUG] Проверяем член {i}: name='{memberName}', type={member?.GetType().Name}");
+                log.DebugLog($"[DEBUG] Checking the member {i}: name='{memberName}', type={member?.GetType().Name}");
 
                 if (memberName == "_command")
                 {
                     var commandValue = GetRawValue(member);
-                    log.DebugLog($"[DEBUG] _command найден через имя! Значение: {commandValue}");
+                    log.DebugLog($"[DEBUG] _command found using the name! Value: {commandValue}");
 
                     if (commandValue is int intVal && intVal == 16)
                     {
-                        log.DebugLog($"[DEBUG] ✓ НАЙДЕН _command = 16 через имя!");
+                        log.DebugLog($"[DEBUG] ✓ Found _command = 16 Using the name!");
                         return true;
                     }
                 }
@@ -176,7 +176,7 @@ namespace Processing
             if (GetClassName(commandClass) == "Param" && commandClass.Members.Count == 5)
             {
                 var argsMember = commandClass.Members[4]; // _args на позиции 4
-                log.DebugLog($"[DEBUG] _args member[4] тип: {argsMember?.GetType().Name}");
+                log.DebugLog($"[DEBUG] _args member[4] type: {argsMember?.GetType().Name}");
 
                 if (argsMember is UClass argsClass)
                 {
@@ -189,7 +189,7 @@ namespace Processing
                         var vectorMember = argsClass.Members[0];
                         if (vectorMember is Uarray argsArray)
                         {
-                            log.DebugLog($"[DEBUG] Найден массив длины: {argsArray.Value?.Length ?? 0}");
+                            log.DebugLog($"[DEBUG] Found array of length: {argsArray.Value?.Length ?? 0}");
 
                             // Извлекаем строки из массива
                             if (argsArray.Value != null)
@@ -200,10 +200,10 @@ namespace Processing
                                     result.Add(extractedString);
                                     if (!string.IsNullOrEmpty(extractedString))
                                     {
-                                        log.DebugLog($"[DEBUG] Извлечена строка: '{extractedString}'");
+                                        log.DebugLog($"[DEBUG] Extracted string: '{extractedString}'");
                                     }
                                     else {
-                                        log.DebugLog($"[DEBUG] Извлечено повествование");
+                                        log.DebugLog($"[DEBUG] Extracted the narrative sting");
                                     }
                                 }
                             }
@@ -220,7 +220,7 @@ namespace Processing
                 if (memberName == "_args")
                 {
                     var argsMember = commandClass.Members[i];
-                    log.DebugLog($"[DEBUG] Найден _args через имя на позиции {i}");
+                    log.DebugLog($"[DEBUG] Found _args using the name on the position {i}");
 
                     if (argsMember is UClass argsClass)
                     {
@@ -234,7 +234,7 @@ namespace Processing
                                 var vectorMember = argsClass.Members[j];
                                 if (vectorMember is Uarray argsArray)
                                 {
-                                    log.DebugLog($"[DEBUG] Найден массив длины: {argsArray.Value?.Length ?? 0}");
+                                    log.DebugLog($"[DEBUG] Found array of length: {argsArray.Value?.Length ?? 0}");
 
                                     if (argsArray.Value != null)
                                     {
@@ -244,7 +244,7 @@ namespace Processing
                                             if (!string.IsNullOrEmpty(extractedString))
                                             {
                                                 result.Add(extractedString);
-                                                log.DebugLog($"[DEBUG] Извлечена строка: '{extractedString}'");
+                                                log.DebugLog($"[DEBUG] Extracted string: '{extractedString}'");
                                             }
                                         }
                                     }
@@ -280,7 +280,7 @@ namespace Processing
                         // Добавить проверку на пустой массив:
                         else if (member is Uarray emptyArray && emptyArray.Value?.Length == 0)
                         {
-                            log.DebugLog("[DEBUG] Найден пустой массив - возвращаем пустую строку");
+                            log.DebugLog("[DEBUG] Found empty array. Returning empty string");
                             return string.Empty; // Пустой тег для повествования
                         }
                     }
@@ -296,7 +296,7 @@ namespace Processing
                 // Добавить проверку на пустой массив:
                 else if (directArray.Value?.Length == 0)
                 {
-                    log.DebugLog("[DEBUG] Прямой пустой массив - возвращаем пустую строку");
+                    log.DebugLog("[DEBUG] Found straight empty array. Returning empty string");
                     return string.Empty;
                 }
             }
