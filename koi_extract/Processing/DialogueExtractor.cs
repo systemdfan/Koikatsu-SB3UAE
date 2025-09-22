@@ -55,7 +55,7 @@ namespace Processing
                         };
 
                         string text;
-                        if (languageMap.ContainsKey(Program.Language))
+                        if (Program.IsExtractinglanguage && languageMap.ContainsKey(Program.Language ?? ""))
                         {
                             var (index, name) = languageMap[Program.Language];
                             if (dialogueStrings.Count > index)

@@ -2,7 +2,7 @@
   "profiles": {
     "koi_extract": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Koikatsu Party\\abdata\" \"C:\\koi\\redir2\" \"C:\\koi\\koi.ini\" --lang=en-US --debug"
+      "commandLineArgs": "\"C:\\koi\\abdata\" \"C:\\koi\\redir\""
     }
   }
 }
