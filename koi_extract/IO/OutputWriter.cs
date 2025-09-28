@@ -37,7 +37,7 @@ namespace IO
 
                 log.DebugLog($"[DEBUG] OriginalTag='{tag}', characterFolder='{characterFolder}'");
 
-                if ((tag == "[H]" ) && config != null)
+                if ((tag == "[H名]" ) && config != null)
                 {
                     string mapped = config.MapName(characterFolder, tag);
                     log.DebugLog($"[DEBUG] Mapped='{mapped}'");
