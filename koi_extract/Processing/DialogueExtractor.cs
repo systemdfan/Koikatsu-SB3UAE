@@ -155,7 +155,7 @@ namespace Processing
 
                     if (commandValue is int intVal && intVal == 16)
                     {
-                        log.DebugLog($"[DEBUG] ✓ Found _command = 16 Using the name!");
+                        log.DebugLog($"[DEBUG] Found _command = 16 Using the name!");
                         return true;
                     }
                 }
@@ -384,7 +384,7 @@ namespace Processing
         {
             if (string.IsNullOrWhiteSpace(s)) return false;
             s = NormalizeString(s);
-            return s == "[H名]" || s == "[P名]";
+            return s == "[H]" || s == "[P]";
         }
 
         private string TryDecodeByteArray(Uarray arr)
